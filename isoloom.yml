@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://www.isoloom.com/schema/v1.json
+# Vulnerable WordPress Misconfig (secDevLabs, by Globo.com) as an Isoloom spec: an outdated,
+# misconfigured WordPress (secDevLabs' published image secdevlabs/a6-the-mistery:wp-version-2,
+# pinned by digest) and its MariaDB machine. The app folder
+# owasp-top10-2021-apps/a5/misconfig-wordpress of secDevLabs is vendored in app/.
+# The site's URL is http://localhost:8000, upstream's published port.
+# `isoloom generate`, then `isoloom run docker`.
+version: 1
+name: secdevlabs-misconfig-wordpress
+
+networks:
+  lab: { cidr: 10.60.101.0/24, internet: false }
+
+machines:
+  db:
+    networks: { lab: 20 }
+    services: [{ port: 3306, name: mariadb }]
+    resources: { cpus: 1, memory_mb: 512 }
+    volumes: { data: /var/lib/mysql }
+    docker:
+      build: build/db
+
+  wordpress:
+    networks: { lab: 10 }
+    services: [{ port: 80, name: web, http: true, publish: 8000 }]
+    resources: { cpus: 1, memory_mb: 512 }
+    depends_on: [db]
+    volumes: { site: /var/www/html }
+    docker:
+      build: build/wordpress
+
+checks:
+  - name: the login page answers
+    http: http://wordpress/wp-login.php
+    wait: 180
+  - name: the login names valid users and the uploads folder is browsable
+    script: checks/misconfig.sh
+    wait: 90
+
+message: |
+  The WordPress site SECWEB answers at http://localhost:{{ machines.wordpress.services.0.publish }}/
+  (its links point to http://localhost:8000). Look at what it tells you when a login fails, which
+  version it runs, and what else it serves.
