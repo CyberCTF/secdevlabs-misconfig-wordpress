@@ -9,6 +9,9 @@ services:
   db:
     build:
       context: ../../build/db
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: secdevlabs-misconfig-wordpress
     image: isoloom/secdevlabs-misconfig-wordpress-db
     platform: linux/amd64
     hostname: db
@@ -39,6 +42,8 @@ services:
           memory: 512M
     labels:
       isoloom.service.mariadb: tcp:3306
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
     restart: unless-stopped
   db-routes:
     image: alpine:3.20
@@ -60,9 +65,15 @@ services:
       db:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
   wordpress:
     build:
       context: ../../build/wordpress
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: secdevlabs-misconfig-wordpress
     image: isoloom/secdevlabs-misconfig-wordpress-wordpress
     platform: linux/amd64
     hostname: wordpress
@@ -99,6 +110,8 @@ services:
           memory: 512M
     labels:
       isoloom.service.web: http:80
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
     restart: unless-stopped
   wordpress-routes:
     image: alpine:3.20
@@ -120,6 +133,9 @@ services:
       wordpress:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
   isoloom-check:
     image: curlimages/curl:8.11.1
     profiles:
@@ -145,6 +161,9 @@ services:
         condition: service_healthy
       wordpress-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
   isoloom-check-db:
     image: curlimages/curl:8.11.1
     profiles:
@@ -164,6 +183,9 @@ services:
         condition: service_healthy
       wordpress-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
   isoloom-check-wordpress:
     image: curlimages/curl:8.11.1
     profiles:
@@ -183,6 +205,9 @@ services:
         condition: service_healthy
       wordpress-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
   isoloom-probe-amd64:
     image: busybox:1.37.0-musl
     platform: linux/amd64
@@ -194,13 +219,28 @@ services:
     - isoloom-probe-amd64:/probe
     network_mode: none
     restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
 networks:
   lab:
     ipam:
       config:
       - subnet: 10.60.101.0/24
         gateway: 10.60.101.1
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
 volumes:
-  db-data: {}
-  wordpress-site: {}
-  isoloom-probe-amd64: {}
+  db-data:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
+  wordpress-site:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
+  isoloom-probe-amd64:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress

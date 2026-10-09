@@ -137,7 +137,8 @@
       "vagrant": "needs `vm:` on db, wordpress",
       "proxmox": "needs `vm:` on db, wordpress",
       "cloud-vm": "needs `vm:` on db, wordpress",
-      "external": "needs `external:` on db, wordpress"
+      "external": "needs `external:` on db, wordpress",
+      "cloud-services": "left out by `targets:`"
     }
   },
   "checks": {
