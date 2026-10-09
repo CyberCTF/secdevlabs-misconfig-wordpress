@@ -4,12 +4,5 @@
   "question": "Find the admin's password through the login page, log in as admin, and list what the outdated WordPress and its configuration expose.",
   "category": "WEB",
   "difficulty": 1,
-  "evidence_kind": "SECRET",
-  "capabilities": [
-    "security-misconfiguration",
-    "user-enumeration",
-    "brute-force",
-    "directory-listing",
-    "wordpress"
-  ]
+  "evidence_kind": "SECRET"
 }
