@@ -1,7 +1,7 @@
 {
   "title": "secDevLabs Vulnerable WordPress Misconfig",
   "description": "A WordPress 4.9.5 site on PHP 7.2.5 with an admin account, set up the way secDevLabs describes it. Its login errors, version, directory listings and HTTP headers give away more than they should.",
-  "question": "Find the admin's password through the login page, log in as admin, and list what the outdated WordPress and its configuration expose.",
+  "question": "Find the admin's password through the login page, log in as admin and list what the misconfigured WordPress exposes. The flag is in /ctf/flag.",
   "category": "WEB",
   "difficulty": 1,
   "evidence_kind": "SECRET"

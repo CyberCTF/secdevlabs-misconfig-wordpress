@@ -8,6 +8,9 @@
 version: 1
 name: secdevlabs-misconfig-wordpress
 
+# Given by the CyberCTF launcher: this player's flag. Without it the development flag.
+inputs: [CTF_FLAG_MAIN]
+
 networks:
   lab: { cidr: 10.60.101.0/24, internet: false }
 
@@ -25,9 +28,11 @@ machines:
     services: [{ port: 80, name: web, http: true, publish: 8000 }]
     resources: { cpus: 1, memory_mb: 512 }
     depends_on: [db]
-    volumes: { site: /var/www/html }
+    volumes: { site: /var/www/html, ctf: /ctf }
+    inputs: [CTF_FLAG_MAIN]
     docker:
       build: build/wordpress
+      init: [ctf/flag.sh]
 
 checks:
   - name: the login page answers

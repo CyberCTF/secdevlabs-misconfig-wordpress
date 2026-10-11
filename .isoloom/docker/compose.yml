@@ -80,10 +80,13 @@ services:
     networks:
       lab:
         ipv4_address: 10.60.101.10
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
     ports:
     - ${ISOLOOM_PUBLISH_ADDRESS:-127.0.0.1}:${ISOLOOM_PUBLISH_FIXED:+8000}:80
     volumes:
     - wordpress-site:/var/www/html
+    - wordpress-ctf:/ctf
     - isoloom-probe-amd64:/.isoloom-probe:ro
     healthcheck:
       test:
@@ -136,6 +139,27 @@ services:
     labels:
       isoloom.managed: 'true'
       isoloom.environment: secdevlabs-misconfig-wordpress
+  wordpress-init-1:
+    image: isoloom/secdevlabs-misconfig-wordpress-wordpress
+    entrypoint:
+    - /bin/sh
+    - /isoloom/init/flag.sh
+    volumes:
+    - ../../ctf/flag.sh:/isoloom/init/flag.sh:ro
+    - wordpress-site:/var/www/html
+    - wordpress-ctf:/ctf
+    network_mode: service:wordpress
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
+    depends_on:
+      wordpress:
+        condition: service_healthy
+      wordpress-routes:
+        condition: service_healthy
+    restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
   isoloom-check:
     image: curlimages/curl:8.11.1
     profiles:
@@ -159,6 +183,8 @@ services:
         condition: service_healthy
       wordpress:
         condition: service_healthy
+      wordpress-init-1:
+        condition: service_completed_successfully
       wordpress-routes:
         condition: service_healthy
     labels:
@@ -181,6 +207,8 @@ services:
         condition: service_healthy
       wordpress:
         condition: service_healthy
+      wordpress-init-1:
+        condition: service_completed_successfully
       wordpress-routes:
         condition: service_healthy
     labels:
@@ -203,6 +231,8 @@ services:
         condition: service_healthy
       wordpress:
         condition: service_healthy
+      wordpress-init-1:
+        condition: service_completed_successfully
       wordpress-routes:
         condition: service_healthy
     labels:
@@ -237,6 +267,10 @@ volumes:
       isoloom.managed: 'true'
       isoloom.environment: secdevlabs-misconfig-wordpress
   wordpress-site:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: secdevlabs-misconfig-wordpress
+  wordpress-ctf:
     labels:
       isoloom.managed: 'true'
       isoloom.environment: secdevlabs-misconfig-wordpress

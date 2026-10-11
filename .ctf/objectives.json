@@ -1,0 +1,50 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Read the flag",
+      "prompt": "Log in as admin and retrieve the flag (/ctf/flag).",
+      "check": {
+        "evidence": "SECRET",
+        "format": "FLAG{%s}"
+      },
+      "dev": "FLAG{dev-secdevlabs-misconfig-wordpress}",
+      "hints": [
+        "The login errors tell valid and invalid user names apart.",
+        "Read about user enumeration and security misconfiguration."
+      ],
+      "steps": [
+        {
+          "key": "version",
+          "title": "Find the version",
+          "prompt": "Which WordPress version runs the site? (x.y.z)",
+          "check": {
+            "answer_regex": "^\\s*4\\.9\\.5\\s*$"
+          }
+        },
+        {
+          "key": "page",
+          "title": "Find the entry",
+          "prompt": "Which page handles the login? (file name)",
+          "check": {
+            "answer": [
+              "wp-login.php",
+              "wp-login"
+            ]
+          }
+        },
+        {
+          "key": "class",
+          "title": "Name the weakness",
+          "prompt": "Which OWASP category fits this lab?",
+          "check": {
+            "answer": [
+              "security misconfiguration",
+              "misconfiguration"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

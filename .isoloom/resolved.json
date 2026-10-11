@@ -3,7 +3,9 @@
   "resolved_version": 1,
   "name": "secdevlabs-misconfig-wordpress",
   "instance": null,
-  "inputs": [],
+  "inputs": [
+    "CTF_FLAG_MAIN"
+  ],
   "networks": {
     "lab": {
       "cidr": "10.60.101.0/24",
@@ -81,9 +83,12 @@
       "depends_on": [
         "db"
       ],
-      "inputs": [],
+      "inputs": [
+        "CTF_FLAG_MAIN"
+      ],
       "volumes": {
-        "site": "/var/www/html"
+        "site": "/var/www/html",
+        "ctf": "/ctf"
       },
       "resources": {
         "cpus": 1,
