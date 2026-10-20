@@ -9,30 +9,39 @@ version: 1
 name: secdevlabs-misconfig-wordpress
 
 # Given by the CyberCTF launcher: this player's flag. Without it the development flag.
-inputs: [CTF_FLAG_MAIN]
+inputs:
+  CTF_FLAG_MAIN: {}
 
 networks:
-  lab: { cidr: 10.60.101.0/24, internet: false }
+  lab: {cidr: 10.60.101.0/24, internet: false}
 
 machines:
   db:
-    networks: { lab: 20 }
-    services: [{ port: 3306, name: mariadb }]
-    resources: { cpus: 1, memory_mb: 512 }
-    volumes: { data: /var/lib/mysql }
-    docker:
+    networks: {lab: 20}
+    resources: {cpus: 1, memory_mb: 512}
+    volumes: {data: /var/lib/mysql}
+    ports:
+      mariadb:
+        port: 3306
+    app:
       build: build/db
-
   wordpress:
-    networks: { lab: 10 }
-    services: [{ port: 80, name: web, http: true, publish: 8000 }]
-    resources: { cpus: 1, memory_mb: 512 }
+    networks: {lab: 10}
+    resources: {cpus: 1, memory_mb: 512}
     depends_on: [db]
-    volumes: { site: /var/www/html, ctf: /ctf }
-    inputs: [CTF_FLAG_MAIN]
-    docker:
+    volumes: {site: /var/www/html, ctf: /ctf}
+    ports:
+      web:
+        port: 80
+        protocol: http
+        publish: true
+    files:
+      - path: /run/lab/ctf_flag_main
+        input: CTF_FLAG_MAIN
+    setup:
+      - ctf/flag.sh
+    app:
       build: build/wordpress
-      init: [ctf/flag.sh]
 
 checks:
   - name: the login page answers
@@ -43,6 +52,6 @@ checks:
     wait: 90
 
 message: |
-  The WordPress site SECWEB answers at http://localhost:{{ machines.wordpress.services.0.publish }}/
+  The WordPress site SECWEB answers at {{ machines.wordpress.ports.web.url }}
   (its links point to http://localhost:8000). Look at what it tells you when a login fails, which
   version it runs, and what else it serves.
