@@ -34,7 +34,9 @@ machines:
       web:
         port: 80
         protocol: http
-        publish: true
+        # WordPress bakes siteurl/home (http://localhost:8000) into its DB, so every link it emits
+        # points at 8000: the host port must be exactly that, not a random free one.
+        publish: { host: 8000, fixed: true }
     files:
       - path: /run/lab/ctf_flag_main
         input: CTF_FLAG_MAIN
